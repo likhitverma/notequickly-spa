@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+   
+  <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+         href="https://cdn-icons-png.flaticon.com/512/4438/4438839.png">
+
+    <title>Notepad</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        display: flex;
+        height: 100vh;
+        margin: 0;
+        background-color: #ffffff;
+        color: #000000;
+        transition: background-color 0.3s, color 0.3s;
+      }
+      .notes-list {
+        width: 25%;
+        height: 96vh;
+        border-right: 1px solid #ccc;
+        border-bottom: 1px solid #ccc;
+        padding: 10px;
+        overflow-y: auto;
+        background-color: #f9f9f9;
+        transition: background-color 0.3s;
+      }
+      .notes-list h2 {
+        text-align: center;
+      }
+      .notes-list ul {
+        list-style: none;
+        padding: 0;
+      }
+      .notes-list ul li {
+        padding: 10px;
+        border: 1px solid #ddd;
+        margin: 5px 0;
+        cursor: pointer;
+        transition: background-color 0.3s, color 0.3s;
+      }
+      .notes-list ul li.active {
+        background-color: #d4f4d4;
+        border-color: #28a745;
+      }
+      .addNoteButton {
+        padding: 5px 10px;
+        border: 1px solid #ccc;
+        background-color: #f8f8f8;
+        cursor: pointer;
+        font-weight: bold;
+        transition: background-color 0.2s;
+      }
+
+      .addNoteButton:hover {
+        background-color: #888888;
+      }
+      .editor {
+        flex-grow: 1;
+        min-width: 80vw;
+        max-width: 80vw;
+        padding: 10px;
+        display: flex;
+        flex-direction: column;
+      }
+      .editor .toolbar {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .editor .title-input {
+        margin-bottom: 10px;
+      }
+      .editor .title-input label {
+        font-weight: bold;
+        font-size: 20px;
+      }
+      .editor .title-input input {
+        width: 60%;
+        padding: 8px;
+        margin-top: 5px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 17px;
+      }
+      .editor .content {
+        flex-grow: 1;
+        border: 1px solid #ccc;
+        padding: 10px;
+        overflow-y: auto;
+        background-color: #ffffff;
+        color: #000000;
+        transition: background-color 0.3s, color 0.3s;
+      }
+
+      .dark-mode {
+        background-color: #121212;
+        color: #ffffff;
+      }
+      .dark-mode .notes-list {
+        background-color: #1e1e1e;
+      }
+
+      .dark-mode .content {
+        background-color: #2e2e2e;
+        color: #ffffff;
+      }
+      .dark-mode #currentNoteTitle {
+        background-color: #2e2e2e;
+        color: #ffffff;
+        font-size: 17px;
+      }
+      .dark-mode .notes-list ul li {
+        border-color: #444;
+      }
+      .dark-mode .notes-list ul li.active {
+        background-color: #4caf50;
+        border-color: #388e3c;
+      }
+
+      .delete-icon {
+        float: right;
+        cursor: pointer;
+      }
+
+      .bold-button-active,
+      .italic-button-active {
+        font-weight: bold;
+        color: #0c0c87;
+      }
+
+      .dark-mode .color-palette {
+        background-color: #1e1e1e;
+      }
+
+      .color-palette {
+        margin-top: 0px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        /* background-color: #1e1e1e; Dark background for palette */
+        padding: 5px;
+        border-radius: 10px; /* Rounded corners for the palette container */
+      }
+
+      .color-palette-row-1,
+      .color-palette-row-2 {
+        display: grid;
+        grid-template-columns: repeat(
+          4,
+          15px
+        ); /* 4 buttons per row, 40px width each */
+        gap: 5px; /* Space between buttons */
+      }
+      .color-palette-row-2 {
+        margin-left: 5px;
+      }
+      .color-palette button {
+        width: 15px;
+        height: 15px;
+        border: 1px solid #ffffff; /* White border for contrast */
+        background-color: transparent; /* Transparent by default */
+        cursor: pointer;
+        border-radius: 3px; /* Rounded corners for buttons */
+        transition: transform 0.2s, box-shadow 0.2s; /* Hover effects */
+      }
+
+      .color-palette button:hover {
+        transform: scale(1.1); /* Slight zoom effect on hover */
+        box-shadow: 0 4px 8px #ffffff33; /* Shadow effect on hover */
+      }
+
+      .color-palette button:focus {
+        outline: none;
+        box-shadow: 0 0 0 3px #ffffff80; /* Focus ring */
+      }
+
+      .font-size-control {
+        display: inline-block;
+      }
+
+      .font-size-dropdown {
+        padding: 5px 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 14px;
+        background-color: #f8f8f8;
+        color: #000;
+        cursor: pointer;
+        transition: all 0.2s ease-in-out;
+        width: 110px;
+      }
+
+      .font-size-dropdown:hover {
+        background-color: #e8e8e8;
+      }
+      .dark-mode .font-size-dropdown {
+        background-color: #2e2e2e;
+        color: #fff;
+      }
+      .dark-mode .font-size-dropdown:hover {
+        background-color: #444; /* Slightly lighter dark background on hover */
+        box-shadow: 0 4px 8px rgba(255, 255, 255, 0.2); /* Shadow for hover in dark mode */
+      }
+
+      .font-size-dropdown:focus {
+        outline: none;
+        border-color: #007bff; /* Focus outline color */
+        box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Focus shadow */
+      }
+
+      .font-size-option {
+        font-size: 14px;
+        padding: 5px;
+      }
+
+      .formatting-buttons {
+        display: flex;
+        justify-content: space-between;
+        width: 100px;
+      }
+      /* General Button Styles */
+      .formatting-button,
+      .dark-mode-toggle-button {
+        width: 30px;
+        height: 30px;
+        border: 1px solid #ccc; /* Light border for default state */
+        border-radius: 5px; /* Rounded corners for better aesthetics */
+        background-color: #f8f8f8; /* Light background color */
+        font-size: 16px; /* Slightly larger font size for visibility */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        transition: all 0.2s ease-in-out;
+        color: #000; /* Text color for light mode */
+        font-weight: bold; /* Bold for default emphasis */
+      }
+
+      /* Hover Effect */
+      .formatting-button:hover,
+      .dark-mode-toggle-button:hover {
+        background-color: #e0e0e0; /* Slightly darker on hover */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Shadow on hover */
+      }
+      /* Focus State */
+      .formatting-button:focus,
+      .dark-mode-toggle-button:focus {
+        outline: none; /* Remove default focus outline */
+        border-color: #007bff; /* Blue border for focus */
+        box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Blue glow for focus */
+      }
+
+      /* Dark Mode Styles */
+      .dark-mode .formatting-button,
+      .dark-mode-toggle-button {
+        background-color: #2e2e2e; /* Dark background */
+        border-color: #444; /* Subtle border in dark mode */
+        color: #fff; /* Light text for contrast */
+      }
+
+      .dark-mode .formatting-button:hover {
+        background-color: #444; /* Slightly lighter dark background on hover */
+        box-shadow: 0 4px 8px rgba(255, 255, 255, 0.2); /* Shadow for hover in dark mode */
+      }
+
+      /* Specific Font Styles for Buttons */
+      #boldButton {
+        font-family: "Arial Black", sans-serif; /* Distinct bold font */
+      }
+
+      #italicButton {
+        font-family: "Georgia", serif; /* Stylish italic font */
+        font-style: italic; /* Italic styling */
+      }
+
+      #underlineButton {
+        font-family: "Verdana", sans-serif; /* Clean font for underline */
+        text-decoration: underline; /* Underline text */
+      }
+
+
+
+      .dark-mode-toggle-button {
+        padding-bottom: 5px;
+      }
+
+      .font-style-control {
+        display: inline-block;
+      }
+
+      .font-style-dropdown {
+        padding: 5px 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 14px;
+        background-color: #f8f8f8;
+        color: #000;
+        cursor: pointer;
+        transition: all 0.2s ease-in-out;
+        width: 110px; /* Slightly wider to fit font names */
+      }
+
+      .font-style-dropdown:hover {
+        background-color: #e8e8e8;
+      }
+
+      .dark-mode .font-style-dropdown {
+        background-color: #2e2e2e;
+        color: #fff;
+      }
+
+      .dark-mode .font-style-dropdown:hover {
+        background-color: #444; /* Hover effect for dark mode */
+      }
+
+      /* width */
+      ::-webkit-scrollbar {
+        width: 10px;
+      }
+
+      /* Track */
+      ::-webkit-scrollbar-track {
+        background: #cecece;
+      }
+
+      /* Handle */
+      ::-webkit-scrollbar-thumb {
+        background: #434343;
+      }
+
+      /* Handle on hover */
+      ::-webkit-scrollbar-thumb:hover {
+        background: #555;
+        cursor: pointer;
+      }
+
+      /* Track */
+      .dark-mode ::-webkit-scrollbar-track {
+        background: #414141;
+      }
+
+      /* Handle */
+      .dark-mode ::-webkit-scrollbar-thumb {
+        background: #161515;
+      }
+
+      /* Handle on hover */
+      .dark-mode ::-webkit-scrollbar-thumb:hover {
+        background: black;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="notes-list">
+      <h2>Notes</h2>
+      <ul id="noteList"></ul>
+      <button onclick="createNote()" class="addNoteButton">&#x271A New Note</button>
+    </div>
+    <div class="editor">
+      <div class="toolbar">
+        <div class="formatting-buttons">
+          <button
+            id="boldButton"
+            class="formatting-button"
+            onclick="formatText('bold')"
+          >
+            B
+          </button>
+          <button
+            id="italicButton"
+            class="formatting-button"
+            onclick="formatText('italic')"
+          >
+            <i>I</i>
+          </button>
+          <button
+            id="underlineButton"
+            class="formatting-button"
+            onclick="formatText('underline')"
+          >
+            U
+          </button>
+
+
+        </div>
+
+        <div class="font-size-control">
+          <select
+            class="font-size-dropdown"
+            onchange="formatText('fontSize', this.value)"
+          >
+            <option class="font-size-option" value="">Text Size</option>
+            <option class="font-size-option" value="1">Small</option>
+            <option class="font-size-option" value="3">Normal</option>
+            <option class="font-size-option" value="5">Large</option>
+            <option class="font-size-option" value="7">Extra Large</option>
+          </select>
+        </div>
+        <div class="font-style-control">
+          <select
+            class="font-style-dropdown"
+            onchange="formatText('fontName', this.value)"
+          >
+            <option class="font-style-option" value="">Font Style</option>
+            <option class="font-style-option" value="Arial">Arial</option>
+            <option class="font-style-option" value="Georgia">Georgia</option>
+            <option class="font-style-option" value="Times New Roman">
+              Times New Roman
+            </option>
+            <option class="font-style-option" value="Verdana">Verdana</option>
+            <option class="font-style-option" value="Courier New">
+              Courier New
+            </option>
+          </select>
+        </div>
+
+        <div class="color-palette">
+          <!-- First Table -->
+          <div class="color-palette-row-1">
+            <button
+              class="palette-black"
+              value="#000000"
+              onclick="formatText('foreColor', this.value)"
+              style="background-color: #000000"
+            ></button>
+            <button
+              class="palette-white"
+              value="#FFFFFF"
+              onclick="formatText('foreColor', this.value)"
+              style="background-color: #ffffff"
+            ></button>
+            <button
+              class="palette-red"
+              value="#FF0000"
+              onclick="formatText('foreColor', this.value)"
+              style="background-color: #ff0000"
+            ></button>
+            <button
+              class="palette-green"
+              value="#00FF00"
+              onclick="formatText('foreColor', this.value)"
+              style="background-color: #00ff00"
+            ></button>
+            <button
+              class="palette-blue"
+              value="#0000FF"
+              onclick="formatText('foreColor', this.value)"
+              style="background-color: #0000ff"
+            ></button>
+            <button
+              class="palette-yellow"
+              value="#FFFF00"
+              onclick="formatText('foreColor', this.value)"
+              style="background-color: #ffff00"
+            ></button>
+            <button
+              class="palette-cyan"
+              value="#00FFFF"
+              onclick="formatText('foreColor', this.value)"
+              style="background-color: #00ffff"
+            ></button>
+            <button
+              class="palette-magenta"
+              value="#FF00FF"
+              onclick="formatText('foreColor', this.value)"
+              style="background-color: #ff00ff"
+            ></button>
+          </div>
+
+          <!-- Second Table -->
+          <div class="color-palette-row-2">
+            <button
+              class="palette-dark-red"
+              value="#800000"
+              onclick="formatText('foreColor', this.value)"
+              style="background-color: #800000"
+            ></button>
+            <button
+              class="palette-dark-green"
+              value="#008000"
+              onclick="formatText('foreColor', this.value)"
+              style="background-color: #008000"
+            ></button>
+            <button
+              class="palette-dark-blue"
+              value="#000080"
+              onclick="formatText('foreColor', this.value)"
+              style="background-color: #000080"
+            ></button>
+            <button
+              class="palette-light-gray"
+              value="#C0C0C0"
+              onclick="formatText('foreColor', this.value)"
+              style="background-color: #c0c0c0"
+            ></button>
+            <button
+              class="palette-gray"
+              value="#808080"
+              onclick="formatText('foreColor', this.value)"
+              style="background-color: #808080"
+            ></button>
+            <button
+              class="palette-orange"
+              value="#FFA500"
+              onclick="formatText('foreColor', this.value)"
+              style="background-color: #ffa500"
+            ></button>
+            <button
+              class="palette-purple"
+              value="#800080"
+              onclick="formatText('foreColor', this.value)"
+              style="background-color: #800080"
+            ></button>
+            <button
+              class="palette-teal"
+              value="#008080"
+              onclick="formatText('foreColor', this.value)"
+              style="background-color: #008080"
+            ></button>
+          </div>
+        </div>
+ 
+        <button class="dark-mode-toggle-button" onclick="downloadText()">
+          ⬇️
+        </button>
+	 <button class="dark-mode-toggle-button" onclick="toggleDarkMode()">
+          🌙
+        </button>
+
+      </div>
+      <div class="title-input">
+        <label>Enter Title: </label>
+        <input
+          id="currentNoteTitle"
+          onchange="saveNoteTitle()"
+          placeholder="Enter note title"
+        />
+      </div>
+      <div
+        id="editorBox"
+        contenteditable="true"
+        class="content"
+        onkeyup="saveCurrentNote()"
+      ></div>
+    </div>
+
+    <script>
+      // let notes = JSON.parse(localStorage.getItem("notes")) || [];
+      let notesApplicationData = JSON.parse(
+        localStorage.getItem("notesApplicationData")
+      ) || { notes: [], isDarkMode: false };
+      let notes = notesApplicationData.notes;
+      let currentNoteIndex = null;
+      let darkMode = JSON.parse(
+        localStorage.getItem("notesApplicationData")
+      ).isDarkMode;
+
+      document
+        .querySelector(".content")
+        .addEventListener("keydown", function (e) {
+          if (e.key === "Tab") {
+            e.preventDefault(); // Prevent the default tab key behavior
+          }
+        });
+
+      function setDefaultSettings() {
+        if (darkMode) {
+          document.body.classList.toggle("dark-mode");
+        }
+        openNote(0);
+      }
+
+      function renderNotes() {
+        const noteList = document.getElementById("noteList");
+        noteList.innerHTML = "";
+        notes.forEach((note, index) => {
+          const li = document.createElement("li");
+          li.innerHTML = `${note.title || `Note ${index + 1}`}
+                                <span class="delete-icon" onclick="deleteNote(${index})">&#x2716</span>`;
+          li.onclick = () => openNote(index);
+          if (index === currentNoteIndex) {
+            li.classList.add("active");
+          }
+          noteList.appendChild(li);
+        });
+      }
+
+      function createNote() {
+        notes.push({ title: "", content: "" });
+        currentNoteIndex = notes.length - 1;
+        saveNotes();
+        renderNotes();
+        openNote(currentNoteIndex);
+      }
+
+      function openNote(index) {
+        currentNoteIndex = index;
+        document.getElementById("editorBox").innerHTML =
+          notes[index].content || "";
+        document.getElementById("currentNoteTitle").value =
+          notes[index].title || `Note ${index + 1}`;
+        renderNotes();
+      }
+
+      function saveNoteTitle() {
+        if (currentNoteIndex !== null) {
+          notes[currentNoteIndex].title =
+            document.getElementById("currentNoteTitle").value;
+          saveNotes();
+          renderNotes();
+        }
+      }
+
+      function saveCurrentNote() {
+        if (currentNoteIndex !== null) {
+          notes[currentNoteIndex].content =
+            document.getElementById("editorBox").innerHTML;
+          saveNotes();
+        }
+      }
+
+      function deleteNote(index) {
+        notes.splice(index, 1);
+        if (currentNoteIndex === index) currentNoteIndex = null;
+        saveNotes();
+        renderNotes();
+      }
+
+      function saveNotes() {
+        localStorage.setItem(
+          "notesApplicationData",
+          JSON.stringify(notesApplicationData)
+        );
+      }
+
+      function formatText(command, value = null) {
+        document.execCommand(command, false, value);
+
+        if (command === "bold" || command === "italic") {
+          const buttonId = command === "bold" ? "boldButton" : "italicButton";
+          const button = document.getElementById(buttonId);
+          const isActive = document.queryCommandState(command);
+
+          if (isActive) {
+            button.classList.add(`${command}-button-active`);
+          } else {
+            button.classList.remove(`${command}-button-active`);
+          }
+        }
+
+        saveCurrentNote();
+      }
+
+      function toggleDarkMode() {
+        document.body.classList.toggle("dark-mode");
+        localStorage.setItem(
+          "notesApplicationData",
+          JSON.stringify({ ...notesApplicationData, isDarkMode: !darkMode })
+        );
+      }
+
+      function downloadText() {
+            const textContent = document.getElementById('editorBox').innerText;
+	    const currentNoteTitle = document.getElementById("currentNoteTitle").value; 
+            const blob = new Blob([textContent], { type: 'text/plain' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = currentNoteTitle;
+            link.click();
+            URL.revokeObjectURL(link.href);
+        }
+      setDefaultSettings();
+      renderNotes();
+    </script>
+  </body>
+</html>
