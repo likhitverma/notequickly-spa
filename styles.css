@@ -465,7 +465,7 @@ body {
   display: flex;
   flex-wrap: wrap;
   gap: var(--spacing-sm);
-  padding: var(--spacing-md);
+  /* padding: var(--spacing-md); */
   background-color: var(--bg-secondary);
   border-bottom: 1px solid var(--border-color);
   align-items: center;
