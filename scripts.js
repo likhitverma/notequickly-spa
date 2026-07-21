@@ -45,6 +45,7 @@ function init() {
  
   renderNotes();
   setupKeyboardShortcuts();
+  setupEditorLinkBehavior();
   updateWordCount();
 }
  
@@ -80,16 +81,47 @@ function setupKeyboardShortcuts() {
   });
 }
  
-// ===================================
-// NOTE MANAGEMENT
-// ===================================
- 
+/**
+ * Ensure links in the editor open in a new tab
+ */
+function setupEditorLinkBehavior() {
+  const editorBox = document.getElementById("editorBox");
+  if (!editorBox) return;
+
+  editorBox.addEventListener("click", function (e) {
+    const link = e.target.closest("a");
+    if (link) {
+      e.preventDefault();
+      window.open(link.href, "_blank", "noopener,noreferrer");
+    }
+  });
+
+  editorBox.addEventListener("input", makeLinksOpenInNewTab);
+  editorBox.addEventListener("paste", () => setTimeout(makeLinksOpenInNewTab, 0));
+  makeLinksOpenInNewTab();
+}
+
+/**
+ * Apply target=_blank to links inside the editor
+ */
+function makeLinksOpenInNewTab() {
+  const editorBox = document.getElementById("editorBox");
+  if (!editorBox) return;
+
+  editorBox.querySelectorAll("a").forEach((link) => {
+    if (!link.getAttribute("target")) {
+      link.setAttribute("target", "_blank");
+      link.setAttribute("rel", "noopener noreferrer");
+    }
+  });
+}
+
 /**
  * Render notes list in sidebar
  */
 function renderNotes() {
   const noteList = document.getElementById("noteList");
- 
+
   if (notes.length === 0) {
     noteList.innerHTML = `
       <div class="empty-state">
@@ -99,22 +131,21 @@ function renderNotes() {
     `;
     return;
   }
- 
+
   noteList.innerHTML = "";
   notes.forEach((note, index) => {
     const li = document.createElement("li");
-   
-    // Format timestamp
+
     const timestamp = note.modified
       ? formatTimestamp(note.modified)
       : formatTimestamp(note.created || Date.now());
-   
+
     li.innerHTML = `
       <span class="note-title">${note.title || `Note ${index + 1}`}</span>
       <span class="note-timestamp"><i class="fas fa-clock"></i> ${timestamp}</span>
       <span class="delete-icon" onclick="confirmDeleteNote(event, ${index})"><i class="fas fa-trash-alt"></i></span>
     `;
-   
+
     li.onclick = (e) => {
       if (!e.target.classList.contains('delete-icon') &&
           !e.target.classList.contains('fa-trash-alt') &&
@@ -122,11 +153,11 @@ function renderNotes() {
         openNote(index);
       }
     };
-   
+
     if (index === currentNoteIndex) {
       li.classList.add("active");
     }
-   
+
     noteList.appendChild(li);
   });
 }
@@ -297,9 +328,10 @@ function insertLink() {
     if (selection.rangeCount > 0) {
       document.execCommand('createLink', false, url);
     } else {
-      document.execCommand('insertHTML', false, `<a href="${url}">${linkText}</a>`);
+      document.execCommand('insertHTML', false, `<a href="${url}" target="_blank" rel="noopener noreferrer">${linkText}</a>`);
     }
    
+    makeLinksOpenInNewTab();
     saveCurrentNote();
   }
 }
