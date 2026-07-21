@@ -405,6 +405,17 @@ function downloadText() {
   link.click();
   URL.revokeObjectURL(link.href);
 }
+
+/**
+ * Clear editor content from current note
+ */
+function clearEditorContent() {
+  if (confirm("Are you sure you want to clear the content of this note? This action cannot be undone.")) {
+    document.getElementById('editorBox').innerHTML = '';
+    saveCurrentNote();
+    updateWordCount();
+  }
+}
  
 // ===================================
 // MODAL FUNCTIONS
