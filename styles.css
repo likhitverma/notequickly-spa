@@ -670,6 +670,18 @@ body {
 .content:focus {
   background-color: var(--bg-primary);
 }
+
+.content a,
+#editorBox a {
+  color: #7070ff;
+  text-decoration: underline;
+}
+
+.content a:hover,
+#editorBox a:hover {
+  color: #5a5ae6;
+  cursor: pointer;
+}
  
 /* ===================================
    STATUS BAR
