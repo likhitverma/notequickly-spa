@@ -285,6 +285,31 @@ body {
   transform: translateY(-2px);
   box-shadow: 0 4px 8px var(--shadow);
 }
+
+.note-items li.dragging {
+  opacity: 0.45;
+  transform: scale(0.98);
+}
+
+.note-items li.drop-before::before,
+.note-items li.drop-after::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 3px;
+  border-radius: 2px;
+  background-color: var(--accent-color);
+  box-shadow: 0 0 6px var(--accent-color);
+}
+
+.note-items li.drop-before::before {
+  top: -6px;
+}
+
+.note-items li.drop-after::after {
+  bottom: -6px;
+}
  
 .note-items li.active {
   /* background: linear-gradient(135deg, var(--accent-color) 0%, var(--accent-hover) 100%);
