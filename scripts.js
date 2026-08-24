@@ -16,6 +16,45 @@ let notes = notesApplicationData.notes;
 let currentNoteIndex = null;
 let darkMode = notesApplicationData.isDarkMode;
 let isFullscreen = false;
+let draggedNoteIndex = null;
+let suppressNoteClick = false;
+
+/**
+ * Give legacy untitled notes a stable fallback title
+ */
+function ensureDefaultNoteTitles() {
+  let changed = false;
+
+  notes.forEach((note, index) => {
+    if (!note.title && !note.defaultTitle) {
+      note.defaultTitle = `Note ${index + 1}`;
+      changed = true;
+    }
+  });
+
+  return changed;
+}
+
+/**
+ * Find the next available fallback title for a newly created note
+ */
+function getNextDefaultNoteTitle() {
+  const noteNumbers = notes
+    .map((note) => note.defaultTitle || note.title || "")
+    .map((title) => title.match(/^Note (\d+)$/))
+    .filter(Boolean)
+    .map((match) => Number(match[1]));
+
+  const nextNumber = noteNumbers.length > 0 ? Math.max(...noteNumbers) + 1 : 1;
+  return `Note ${nextNumber}`;
+}
+
+/**
+ * Return the stable title shown for a note
+ */
+function getNoteDisplayTitle(note, index) {
+  return note.title || note.defaultTitle || `Note ${index + 1}`;
+}
  
 // ===================================
 // INITIALIZATION
@@ -25,6 +64,10 @@ let isFullscreen = false;
  * Initialize application on page load
  */
 function init() {
+  if (ensureDefaultNoteTitles()) {
+    saveNotes();
+  }
+
   // Set dark mode if enabled
   if (darkMode) {
     document.body.classList.add("dark-mode");
@@ -135,18 +178,26 @@ function renderNotes() {
   noteList.innerHTML = "";
   notes.forEach((note, index) => {
     const li = document.createElement("li");
+    li.draggable = true;
+    li.dataset.noteIndex = index;
+    li.setAttribute("aria-grabbed", "false");
 
     const timestamp = note.modified
       ? formatTimestamp(note.modified)
       : formatTimestamp(note.created || Date.now());
 
     li.innerHTML = `
-      <span class="note-title">${note.title || `Note ${index + 1}`}</span>
+      <span class="note-title">${getNoteDisplayTitle(note, index)}</span>
       <span class="note-timestamp"><i class="fas fa-clock"></i> ${timestamp}</span>
       <span class="delete-icon" onclick="confirmDeleteNote(event, ${index})"><i class="fas fa-trash-alt"></i></span>
     `;
 
     li.onclick = (e) => {
+      if (suppressNoteClick) {
+        suppressNoteClick = false;
+        return;
+      }
+
       if (!e.target.classList.contains('delete-icon') &&
           !e.target.classList.contains('fa-trash-alt') &&
           !e.target.closest('.delete-icon')) {
@@ -158,8 +209,96 @@ function renderNotes() {
       li.classList.add("active");
     }
 
+    li.addEventListener("dragstart", handleNoteDragStart);
+    li.addEventListener("dragover", handleNoteDragOver);
+    li.addEventListener("dragleave", handleNoteDragLeave);
+    li.addEventListener("drop", handleNoteDrop);
+    li.addEventListener("dragend", handleNoteDragEnd);
+
     noteList.appendChild(li);
   });
+}
+
+/**
+ * Start dragging a note, unless the delete control was the drag origin
+ */
+function handleNoteDragStart(event) {
+  if (event.target.closest(".delete-icon")) {
+    event.preventDefault();
+    return;
+  }
+
+  const noteItem = event.currentTarget;
+  draggedNoteIndex = Number(noteItem.dataset.noteIndex);
+  noteItem.classList.add("dragging");
+  noteItem.setAttribute("aria-grabbed", "true");
+  event.dataTransfer.effectAllowed = "move";
+  event.dataTransfer.setData("text/plain", String(draggedNoteIndex));
+}
+
+/**
+ * Show where the dragged note will be inserted
+ */
+function handleNoteDragOver(event) {
+  event.preventDefault();
+
+  const noteItem = event.currentTarget;
+  if (draggedNoteIndex === null || Number(noteItem.dataset.noteIndex) === draggedNoteIndex) {
+    return;
+  }
+
+  event.dataTransfer.dropEffect = "move";
+  document.querySelectorAll("#noteList li.drop-before, #noteList li.drop-after")
+    .forEach((item) => item.classList.remove("drop-before", "drop-after"));
+
+  const isAfter = event.clientY > noteItem.getBoundingClientRect().top + noteItem.offsetHeight / 2;
+  noteItem.classList.add(isAfter ? "drop-after" : "drop-before");
+}
+
+/**
+ * Remove the drop indicator when leaving a note
+ */
+function handleNoteDragLeave(event) {
+  if (!event.currentTarget.contains(event.relatedTarget)) {
+    event.currentTarget.classList.remove("drop-before", "drop-after");
+  }
+}
+
+/**
+ * Reorder the notes array and persist the new order
+ */
+function handleNoteDrop(event) {
+  event.preventDefault();
+
+  const targetNoteIndex = Number(event.currentTarget.dataset.noteIndex);
+  if (draggedNoteIndex === null || draggedNoteIndex === targetNoteIndex) {
+    return;
+  }
+
+  const draggedNote = notes[draggedNoteIndex];
+  [notes[draggedNoteIndex], notes[targetNoteIndex]] = [
+    notes[targetNoteIndex],
+    notes[draggedNoteIndex]
+  ];
+  currentNoteIndex = notes.indexOf(draggedNote);
+  saveNotes();
+  suppressNoteClick = true;
+  setTimeout(() => {
+    suppressNoteClick = false;
+  }, 300);
+  openNote(currentNoteIndex);
+  searchNotes();
+}
+
+/**
+ * Clear drag state after a drop or cancelled drag
+ */
+function handleNoteDragEnd(event) {
+  event.currentTarget.classList.remove("dragging", "drop-before", "drop-after");
+  event.currentTarget.setAttribute("aria-grabbed", "false");
+  document.querySelectorAll("#noteList li.drop-before, #noteList li.drop-after")
+    .forEach((item) => item.classList.remove("drop-before", "drop-after"));
+  draggedNoteIndex = null;
 }
  
 /**
@@ -187,6 +326,7 @@ function formatTimestamp(timestamp) {
 function createNote() {
   const newNote = {
     title: "",
+    defaultTitle: getNextDefaultNoteTitle(),
     content: "",
     created: Date.now(),
     modified: Date.now()
@@ -212,7 +352,7 @@ function openNote(index) {
   const note = notes[index];
  
   document.getElementById("editorBox").innerHTML = note.content || "";
-  document.getElementById("currentNoteTitle").value = note.title || `Note ${index + 1}`;
+  document.getElementById("currentNoteTitle").value = getNoteDisplayTitle(note, index);
  
   renderNotes();
   updateWordCount();
@@ -249,7 +389,7 @@ function saveCurrentNote() {
 function confirmDeleteNote(event, index) {
   event.stopPropagation();
  
-  if (confirm(`Are you sure you want to delete "${notes[index].title || `Note ${index + 1}`}"?`)) {
+  if (confirm(`Are you sure you want to delete "${getNoteDisplayTitle(notes[index], index)}"?`)) {
     deleteNote(index);
   }
 }
