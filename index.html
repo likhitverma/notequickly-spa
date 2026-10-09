@@ -1,11 +1,16 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" type="image/png" sizes="32x32" href="https://cdn-icons-png.flaticon.com/512/4438/4438839.png">
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="https://cdn-icons-png.flaticon.com/512/4438/4438839.png"
+    />
     <title>NoteQuickly SPA</title>
-   
+
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -17,37 +22,57 @@
       href="https://fonts.googleapis.com/css2?family=Lexend+Deca:wght@400;500;700&display=swap"
       rel="stylesheet"
     />
-   
+
     <!-- Font Awesome -->
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
     />
-   
+
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body class="dark-mode">
     <!-- Header -->
     <header class="app-header">
       <div class="header-content">
-        <button class="sidebar-toggle" onclick="toggleSidebar()" title="Toggle Sidebar" aria-label="Toggle Sidebar">
+        <button
+          class="sidebar-toggle"
+          onclick="toggleSidebar()"
+          title="Toggle Sidebar"
+          aria-label="Toggle Sidebar"
+        >
           <i class="fas fa-bars"></i>
         </button>
         <h1 class="app-title">NoteQuickly SPA</h1>
         <div class="header-actions">
-          <button class="header-button" onclick="openHelpModal()" title="Keyboard Shortcuts (F1)" aria-label="Help">
+          <button
+            class="header-button"
+            onclick="openHelpModal()"
+            title="Keyboard Shortcuts (F1)"
+            aria-label="Help"
+          >
             <i class="fas fa-circle-question"></i>
           </button>
-          <button class="header-button" onclick="openAboutModal()" title="About" aria-label="About">
+          <button
+            class="header-button"
+            onclick="openAboutModal()"
+            title="About"
+            aria-label="About"
+          >
             <i class="fas fa-circle-info"></i>
           </button>
-          <button class="header-button theme-toggle" onclick="toggleDarkMode()" title="Toggle Theme" aria-label="Toggle Theme">
+          <button
+            class="header-button theme-toggle"
+            onclick="toggleDarkMode()"
+            title="Toggle Theme"
+            aria-label="Toggle Theme"
+          >
             <i class="fas fa-moon"></i>
           </button>
         </div>
       </div>
     </header>
- 
+
     <div class="main-container">
       <!-- Sidebar -->
       <aside class="notes-list" id="notesSidebar">
@@ -55,7 +80,13 @@
           <h2>My Notes</h2>
           <div class="search-wrapper">
             <i class="fas fa-search search-icon"></i>
-            <input type="text" id="searchNotes" class="search-input" placeholder="Search notes..." oninput="searchNotes()" />
+            <input
+              type="text"
+              id="searchNotes"
+              class="search-input"
+              placeholder="Search notes..."
+              oninput="searchNotes()"
+            />
           </div>
         </div>
         <ul id="noteList" class="note-items"></ul>
@@ -63,40 +94,80 @@
           <i class="fas fa-plus"></i> New Note
         </button>
       </aside>
- 
+
       <!-- Editor -->
       <main class="editor">
         <!-- Toolbar -->
         <div class="toolbar">
           <!-- Group 1: Undo/Redo -->
           <div class="toolbar-group">
-            <button class="toolbar-btn" onclick="document.execCommand('undo')" title="Undo (Ctrl+Z)" aria-label="Undo">
+            <button
+              class="toolbar-btn"
+              onclick="document.execCommand('undo')"
+              title="Undo (Ctrl+Z)"
+              aria-label="Undo"
+            >
               <i class="fas fa-rotate-left"></i>
             </button>
-            <button class="toolbar-btn" onclick="document.execCommand('redo')" title="Redo (Ctrl+Y)" aria-label="Redo">
+            <button
+              class="toolbar-btn"
+              onclick="document.execCommand('redo')"
+              title="Redo (Ctrl+Y)"
+              aria-label="Redo"
+            >
               <i class="fas fa-rotate-right"></i>
             </button>
           </div>
- 
+
           <!-- Group 2: Text Formatting -->
           <div class="toolbar-group">
-            <button id="boldButton" class="toolbar-btn" onclick="formatText('bold')" title="Bold (Ctrl+B)" aria-label="Bold">
+            <button
+              id="boldButton"
+              class="toolbar-btn"
+              onclick="formatText('bold')"
+              title="Bold (Ctrl+B)"
+              aria-label="Bold"
+            >
               <i class="fas fa-bold"></i>
             </button>
-            <button id="italicButton" class="toolbar-btn" onclick="formatText('italic')" title="Italic (Ctrl+I)" aria-label="Italic">
+            <button
+              id="italicButton"
+              class="toolbar-btn"
+              onclick="formatText('italic')"
+              title="Italic (Ctrl+I)"
+              aria-label="Italic"
+            >
               <i class="fas fa-italic"></i>
             </button>
-            <button id="underlineButton" class="toolbar-btn" onclick="formatText('underline')" title="Underline (Ctrl+U)" aria-label="Underline">
+            <button
+              id="underlineButton"
+              class="toolbar-btn"
+              onclick="formatText('underline')"
+              title="Underline (Ctrl+U)"
+              aria-label="Underline"
+            >
               <i class="fas fa-underline"></i>
             </button>
-            <button class="toolbar-btn" onclick="formatText('strikeThrough')" title="Strikethrough" aria-label="Strikethrough">
+            <button
+              class="toolbar-btn"
+              onclick="formatText('strikeThrough')"
+              title="Strikethrough"
+              aria-label="Strikethrough"
+            >
               <i class="fas fa-strikethrough"></i>
             </button>
           </div>
- 
+
           <!-- Group 3: Headings -->
           <div class="toolbar-group">
-            <select class="toolbar-select" onchange="formatText('formatBlock', this.value); this.value='';" aria-label="Heading">
+            <select
+              class="toolbar-select"
+              onchange="
+                formatText('formatBlock', this.value);
+                this.value = '';
+              "
+              aria-label="Heading"
+            >
               <option value="">Heading</option>
               <option value="h1">H1</option>
               <option value="h2">H2</option>
@@ -104,61 +175,169 @@
               <option value="p">Normal</option>
             </select>
           </div>
- 
+
           <!-- Group 4: Alignment -->
           <div class="toolbar-group">
-            <button class="toolbar-btn" onclick="formatText('justifyLeft')" title="Align Left" aria-label="Align Left">
+            <button
+              class="toolbar-btn"
+              onclick="formatText('justifyLeft')"
+              title="Align Left"
+              aria-label="Align Left"
+            >
               <i class="fas fa-align-left"></i>
             </button>
-            <button class="toolbar-btn" onclick="formatText('justifyCenter')" title="Align Center" aria-label="Align Center">
+            <button
+              class="toolbar-btn"
+              onclick="formatText('justifyCenter')"
+              title="Align Center"
+              aria-label="Align Center"
+            >
               <i class="fas fa-align-center"></i>
             </button>
-            <button class="toolbar-btn" onclick="formatText('justifyRight')" title="Align Right" aria-label="Align Right">
+            <button
+              class="toolbar-btn"
+              onclick="formatText('justifyRight')"
+              title="Align Right"
+              aria-label="Align Right"
+            >
               <i class="fas fa-align-right"></i>
             </button>
-            <button class="toolbar-btn" onclick="formatText('justifyFull')" title="Justify" aria-label="Justify">
+            <button
+              class="toolbar-btn"
+              onclick="formatText('justifyFull')"
+              title="Justify"
+              aria-label="Justify"
+            >
               <i class="fas fa-align-justify"></i>
             </button>
           </div>
- 
+
           <!-- Group 5: Lists -->
           <div class="toolbar-group">
-            <button class="toolbar-btn" onclick="formatText('insertUnorderedList')" title="Bullet List" aria-label="Bullet List">
+            <button
+              class="toolbar-btn"
+              onclick="formatText('insertUnorderedList')"
+              title="Bullet List"
+              aria-label="Bullet List"
+            >
               <i class="fas fa-list-ul"></i>
             </button>
-            <button class="toolbar-btn" onclick="formatText('insertOrderedList')" title="Numbered List" aria-label="Numbered List">
+            <button
+              class="toolbar-btn"
+              onclick="formatText('insertOrderedList')"
+              title="Numbered List"
+              aria-label="Numbered List"
+            >
               <i class="fas fa-list-ol"></i>
             </button>
           </div>
- 
+
           <!-- Group 6: Colors -->
           <div class="toolbar-group">
-            <input type="color" id="textColorPicker" class="color-picker" onchange="formatText('foreColor', this.value)" title="Text Color" aria-label="Text Color" />
-            <input type="color" id="bgColorPicker" class="color-picker" onchange="formatText('backColor', this.value)" title="Highlight Color" aria-label="Highlight Color" />
+            <input
+              type="color"
+              id="textColorPicker"
+              class="color-picker"
+              onchange="formatText('foreColor', this.value)"
+              title="Text Color"
+              aria-label="Text Color"
+            />
+            <input
+              type="color"
+              id="bgColorPicker"
+              class="color-picker"
+              onchange="formatText('backColor', this.value)"
+              title="Highlight Color"
+              aria-label="Highlight Color"
+            />
           </div>
- 
+
           <!-- Group 6.5: Quick Color Palette -->
           <div class="toolbar-group color-palette-group">
             <span class="palette-label">Colors:</span>
             <div class="quick-color-palette">
-              <button class="palette-color" onclick="formatText('foreColor', '#000000')" style="background-color: #000000;" title="Black"></button>
-              <button class="palette-color" onclick="formatText('foreColor', '#ffffff')" style="background-color: #ffffff;" title="White"></button>
-              <button class="palette-color" onclick="formatText('foreColor', '#e74c3c')" style="background-color: #e74c3c;" title="Red"></button>
-              <button class="palette-color" onclick="formatText('foreColor', '#3498db')" style="background-color: #3498db;" title="Blue"></button>
-              <button class="palette-color" onclick="formatText('foreColor', '#2ecc71')" style="background-color: #2ecc71;" title="Green"></button>
-              <button class="palette-color" onclick="formatText('foreColor', '#f39c12')" style="background-color: #f39c12;" title="Orange"></button>
-              <button class="palette-color" onclick="formatText('foreColor', '#9b59b6')" style="background-color: #9b59b6;" title="Purple"></button>
-              <button class="palette-color" onclick="formatText('foreColor', '#1abc9c')" style="background-color: #1abc9c;" title="Teal"></button>
-              <button class="palette-color" onclick="formatText('foreColor', '#e91e63')" style="background-color: #e91e63;" title="Pink"></button>
-              <button class="palette-color" onclick="formatText('foreColor', '#34495e')" style="background-color: #34495e;" title="Dark Gray"></button>
-              <button class="palette-color" onclick="formatText('foreColor', '#95a5a6')" style="background-color: #95a5a6;" title="Gray"></button>
-              <button class="palette-color" onclick="formatText('foreColor', '#16a085')" style="background-color: #16a085;" title="Dark Teal"></button>
+              <button
+                class="palette-color"
+                onclick="formatText('foreColor', '#000000')"
+                style="background-color: #000000"
+                title="Black"
+              ></button>
+              <button
+                class="palette-color"
+                onclick="formatText('foreColor', '#ffffff')"
+                style="background-color: #ffffff"
+                title="White"
+              ></button>
+              <button
+                class="palette-color"
+                onclick="formatText('foreColor', '#e74c3c')"
+                style="background-color: #e74c3c"
+                title="Red"
+              ></button>
+              <button
+                class="palette-color"
+                onclick="formatText('foreColor', '#3498db')"
+                style="background-color: #3498db"
+                title="Blue"
+              ></button>
+              <button
+                class="palette-color"
+                onclick="formatText('foreColor', '#2ecc71')"
+                style="background-color: #2ecc71"
+                title="Green"
+              ></button>
+              <button
+                class="palette-color"
+                onclick="formatText('foreColor', '#f39c12')"
+                style="background-color: #f39c12"
+                title="Orange"
+              ></button>
+              <button
+                class="palette-color"
+                onclick="formatText('foreColor', '#9b59b6')"
+                style="background-color: #9b59b6"
+                title="Purple"
+              ></button>
+              <button
+                class="palette-color"
+                onclick="formatText('foreColor', '#1abc9c')"
+                style="background-color: #1abc9c"
+                title="Teal"
+              ></button>
+              <button
+                class="palette-color"
+                onclick="formatText('foreColor', '#e91e63')"
+                style="background-color: #e91e63"
+                title="Pink"
+              ></button>
+              <button
+                class="palette-color"
+                onclick="formatText('foreColor', '#34495e')"
+                style="background-color: #34495e"
+                title="Dark Gray"
+              ></button>
+              <button
+                class="palette-color"
+                onclick="formatText('foreColor', '#95a5a6')"
+                style="background-color: #95a5a6"
+                title="Gray"
+              ></button>
+              <button
+                class="palette-color"
+                onclick="formatText('foreColor', '#16a085')"
+                style="background-color: #16a085"
+                title="Dark Teal"
+              ></button>
             </div>
           </div>
- 
+
           <!-- Group 7: Font -->
           <div class="toolbar-group">
-            <select class="toolbar-select" onchange="formatText('fontName', this.value)" aria-label="Font Family">
+            <select
+              class="toolbar-select"
+              onchange="formatText('fontName', this.value)"
+              aria-label="Font Family"
+            >
               <option value="">Font</option>
               <option value="Arial">Arial</option>
               <option value="Georgia">Georgia</option>
@@ -167,7 +346,11 @@
               <option value="Courier New">Courier New</option>
               <option value="Comic Sans MS">Comic Sans MS</option>
             </select>
-            <select class="toolbar-select" onchange="formatText('fontSize', this.value)" aria-label="Font Size">
+            <select
+              class="toolbar-select"
+              onchange="formatText('fontSize', this.value)"
+              aria-label="Font Size"
+            >
               <option value="">Size</option>
               <option value="1">Small</option>
               <option value="3">Normal</option>
@@ -175,31 +358,77 @@
               <option value="7">Huge</option>
             </select>
           </div>
- 
+
           <!-- Group 8: Insert -->
           <div class="toolbar-group">
-            <button class="toolbar-btn" onclick="insertLink()" title="Insert Link (Ctrl+K)" aria-label="Insert Link">
+            <button
+              class="toolbar-btn"
+              onclick="insertLink()"
+              title="Insert Link (Ctrl+K)"
+              aria-label="Insert Link"
+            >
               <i class="fas fa-link"></i>
             </button>
-            <button class="toolbar-btn" onclick="formatText('removeFormat')" title="Clear Formatting" aria-label="Clear Formatting">
+            <button
+              class="toolbar-btn"
+              onclick="formatText('removeFormat')"
+              title="Clear Formatting"
+              aria-label="Clear Formatting"
+            >
               <i class="fas fa-eraser"></i>
             </button>
           </div>
- 
+
           <!-- Group 9: Actions -->
           <div class="toolbar-group">
-            <button class="toolbar-btn" onclick="toggleFullscreen()" title="Fullscreen (F11)" aria-label="Fullscreen">
+            <button
+              class="toolbar-btn"
+              onclick="toggleFullscreen()"
+              title="Fullscreen (F11)"
+              aria-label="Fullscreen"
+            >
               <i class="fas fa-expand"></i>
             </button>
-            <button class="toolbar-btn" onclick="downloadText()" title="Download Note" aria-label="Download">
+            <button
+              id="detachEditorButton"
+              class="toolbar-btn"
+              onclick="toggleDetachedEditor()"
+              title="Open editor in a separate window"
+              aria-label="Open editor in a separate window"
+            >
+              <i class="fas fa-up-right-from-square"></i>
+            </button>
+            <button
+              class="toolbar-btn"
+              onclick="downloadText()"
+              title="Download Note"
+              aria-label="Download"
+            >
               <i class="fas fa-download"></i>
             </button>
-            <button class="toolbar-btn" onclick="clearEditorContent()" title="Clear Content" aria-label="Clear Content">
+            <button
+              class="toolbar-btn"
+              onclick="clearEditorContent()"
+              title="Clear Content"
+              aria-label="Clear Content"
+            >
               <i class="fas fa-broom"></i>
             </button>
           </div>
+           <div class="toolbar-group toolbar-visibility-group">
+          <button
+            id="toggleToolbarButton"
+            class="toolbar-btn"
+            onclick="toggleToolbarVisibility()"
+            title="Hide Toolbar"
+            aria-label="Hide Toolbar"
+            aria-pressed="false"
+          >
+            <i class="fas fa-eye-slash" aria-hidden="true"></i>
+          </button>
         </div>
- 
+        </div>
+       
         <!-- Title Input -->
         <div class="title-section">
           <input
@@ -210,16 +439,19 @@
             aria-label="Note Title"
           />
         </div>
- 
+
         <!-- Editor Box -->
         <div
           id="editorBox"
           contenteditable="true"
           class="content"
-          onkeyup="saveCurrentNote(); updateWordCount();"
+          onkeyup="
+            saveCurrentNote();
+            updateWordCount();
+          "
           aria-label="Note Content"
         ></div>
- 
+
         <!-- Status Bar -->
         <div class="status-bar">
           <div class="status-left">
@@ -233,7 +465,7 @@
         </div>
       </main>
     </div>
- 
+
     <!-- About Modal -->
     <div id="aboutModal" class="modal">
       <div class="modal-content">
@@ -250,16 +482,19 @@
           <h3>NoteQuickly SPA</h3>
           <p class="version">Version 2.0</p>
           <p class="about-description">
-            A fast, lightweight note-taking application for temporary notes stored locally in your browser.
-            Perfect for quick thoughts, reminders, and drafts that you need instant access to.
+            A fast, lightweight note-taking application for temporary notes
+            stored locally in your browser. Perfect for quick thoughts,
+            reminders, and drafts that you need instant access to.
           </p>
-         
+
           <h4>Developer</h4>
           <p class="developer-name">Likhit Verma</p>
-         
+
           <h4>Features</h4>
           <ul class="features-list">
-            <li>Rich text formatting (bold, italic, underline, strikethrough)</li>
+            <li>
+              Rich text formatting (bold, italic, underline, strikethrough)
+            </li>
             <li>Multiple heading styles and text alignment</li>
             <li>Color customization for text and highlights</li>
             <li>Ordered and unordered lists</li>
@@ -271,16 +506,17 @@
             <li>Fullscreen distraction-free mode</li>
             <li>Word and character count</li>
           </ul>
-         
+
           <h4>Privacy Statement</h4>
           <p class="privacy-statement">
-            <i class="fas fa-lock"></i> All notes are stored locally in your browser. No data is sent to any server.
-            Your notes remain completely private and under your control.
+            <i class="fas fa-lock"></i> All notes are stored locally in your
+            browser. No data is sent to any server. Your notes remain completely
+            private and under your control.
           </p>
         </div>
       </div>
     </div>
- 
+
     <!-- Help Modal -->
     <div id="helpModal" class="modal">
       <div class="modal-content">
@@ -328,7 +564,7 @@
         </div>
       </div>
     </div>
- 
+
     <script src="scripts.js"></script>
   </body>
 </html>
